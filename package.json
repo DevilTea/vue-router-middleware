@@ -1,17 +1,17 @@
 {
-	"name": "pkg-placeholder",
+	"name": "@deviltea/vue-router-middleware",
 	"type": "module",
 	"version": "0.0.0",
 	"packageManager": "pnpm@8.11.0",
-	"description": "_description_",
+	"description": "A simple router middleware system implemented by beforeEnter guard.",
 	"author": "DevilTea <ch870814@gmail.com>",
 	"license": "MIT",
-	"homepage": "https://github.com/DevilTea/repo-placeholder#readme",
+	"homepage": "https://github.com/DevilTea/vue-router-middleware#readme",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/DevilTea/repo-placeholder.git"
+		"url": "git+https://github.com/DevilTea/vue-router-middleware.git"
 	},
-	"bugs": "https://github.com/DevilTea/repo-placeholder/issues",
+	"bugs": "https://github.com/DevilTea/vue-router-middleware/issues",
 	"keywords": [],
 	"sideEffects": false,
 	"exports": {
@@ -52,6 +52,10 @@
 		"typecheck": "tsc --noEmit --project tsconfig.test.json",
 		"prepare": "simple-git-hooks"
 	},
+	"peerDependencies": {
+		"vue": ">=3.0.0",
+		"vue-router": ">=4.0.0"
+	},
 	"devDependencies": {
 		"@antfu/ni": "^0.21.12",
 		"@deviltea/eslint-config": "^3.0.0",
@@ -65,10 +69,12 @@
 		"pnpm": "^8.11.0",
 		"rimraf": "^5.0.5",
 		"simple-git-hooks": "^2.9.0",
-		"typescript": "^5.3.2",
+		"typescript": "^5.3.3",
 		"unbuild": "^2.0.0",
 		"vite": "^5.0.4",
-		"vitest": "^1.0.2"
+		"vitest": "^1.0.2",
+		"vue": "^3.3.13",
+		"vue-router": "^4.2.5"
 	},
 	"simple-git-hooks": {
 		"pre-commit": "pnpm lint-staged"
