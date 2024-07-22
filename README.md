@@ -17,7 +17,7 @@ npm install @deviltea/vue-router-middleware
 
 ```ts
 import { createRouter, createWebHistory } from 'vue-router'
-import { createHandleMiddlewares, defineMiddleware } from '@deviltea/vue-router-middleware'
+import { defineMiddleware, handleMiddlewares } from '@deviltea/vue-router-middleware'
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -51,13 +51,12 @@ const router = createRouter({
 	]
 })
 
-router.beforeEach(createHandleMiddlewares())
+router.beforeEach(handleMiddlewares)
 ```
 
 ## License
 
 [MIT](./LICENSE) License © 2023-PRESENT [DevilTea](https://github.com/DevilTea)
-
 
 <!-- Badges -->
 
