@@ -5,7 +5,7 @@ export * from './types'
 
 export async function handleMiddlewares(...[to, from]: Parameters<Parameters<Router['beforeEach']>[0]>) {
 	// If the user is navigating to the same route, skip the middlewares
-	if (to.fullPath === from.fullPath)
+	if (to.fullPath === from.fullPath && to.name === from.name)
 		return true
 
 	const middlewares = to.matched.flatMap(({ meta }) => meta?.middleware ?? [])
