@@ -16,8 +16,8 @@ npm install @deviltea/vue-router-middleware
 ## Usage
 
 ```ts
-import { createRouter, createWebHistory } from 'vue-router'
 import { defineMiddleware, handleMiddlewares } from '@deviltea/vue-router-middleware'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
 	history: createWebHistory(),
