@@ -8,7 +8,25 @@ export async function handleMiddlewares(...[to, from]: Parameters<Parameters<Rou
 	if (to.fullPath === from.fullPath && to.name === from.name)
 		return true
 
-	const middlewares = to.matched.flatMap(({ meta }) => meta?.middleware ?? [])
+	// Early exit if no matched routes
+	if (to.matched.length === 0)
+		return true
+
+	// Collect middlewares efficiently
+	const middlewares: Middleware[] = []
+	for (const matched of to.matched) {
+		const middleware = matched.meta?.middleware
+		if (middleware) {
+			if (Array.isArray(middleware))
+				middlewares.push(...middleware)
+			else
+				middlewares.push(middleware)
+		}
+	}
+
+	// Early exit if no middlewares
+	if (middlewares.length === 0)
+		return true
 
 	for (const middleware of middlewares) {
 		const result = await middleware(to, from)
