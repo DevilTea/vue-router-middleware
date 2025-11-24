@@ -13,7 +13,7 @@ describe('defineMiddleware', () => {
 describe('handleMiddlewares', () => {
 	const createRoute = (
 		path: string,
-		name: string,
+		name?: string,
 		middlewares: any[] = [],
 		options: {
 			hash?: string
@@ -81,8 +81,8 @@ describe('handleMiddlewares', () => {
 	})
 
 	it('should return true when navigating to same route without name', async () => {
-		const to = createRoute('/about', undefined as any)
-		const from = createRoute('/about', undefined as any)
+		const to = createRoute('/about')
+		const from = createRoute('/about')
 		const result = await handleMiddlewares(to, from)
 		expect(result).toBe(true)
 	})

@@ -19,7 +19,7 @@ function shallowEqual(obj1: Record<string, any>, obj2: Record<string, any>): boo
 		return false
 
 	for (const key of keys1) {
-		if (obj1[key] !== obj2[key])
+		if (!(key in obj2) || obj1[key] !== obj2[key])
 			return false
 	}
 
