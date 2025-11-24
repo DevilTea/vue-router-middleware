@@ -5,7 +5,13 @@ export * from './types'
 
 export async function handleMiddlewares(...[to, from]: Parameters<Parameters<Router['beforeEach']>[0]>) {
 	// If the user is navigating to the same route, skip the middlewares
-	if (to.fullPath === from.fullPath && to.name === from.name)
+	// Check path, query, params, and name - but not hash (hash is typically for scroll position)
+	const isSamePath = to.path === from.path
+	const isSameName = to.name === from.name
+	const isSameQuery = JSON.stringify(to.query) === JSON.stringify(from.query)
+	const isSameParams = JSON.stringify(to.params) === JSON.stringify(from.params)
+
+	if (isSamePath && isSameName && isSameQuery && isSameParams)
 		return true
 
 	// Early exit if no matched routes

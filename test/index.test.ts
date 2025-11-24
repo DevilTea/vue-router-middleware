@@ -32,6 +32,46 @@ describe('handleMiddlewares', () => {
 		expect(result).toBe(true)
 	})
 
+	it('should skip middlewares when only hash changes', async () => {
+		const middleware = vi.fn().mockResolvedValue(true)
+		const to = { ...createRoute('/docs#api', 'docs', [middleware]), hash: '#api', path: '/docs', fullPath: '/docs#api' }
+		const from = { ...createRoute('/docs#intro', 'docs'), hash: '#intro', path: '/docs', fullPath: '/docs#intro' }
+		const result = await handleMiddlewares(to, from)
+
+		// Hash-only changes should skip middlewares (hash is for scroll position)
+		expect(middleware).not.toHaveBeenCalled()
+		expect(result).toBe(true)
+	})
+
+	it('should execute middlewares when only query changes', async () => {
+		const middleware = vi.fn().mockResolvedValue(true)
+		const to = { ...createRoute('/search?q=react', 'search', [middleware]), path: '/search', query: { q: 'react' }, fullPath: '/search?q=react' }
+		const from = { ...createRoute('/search?q=vue', 'search'), path: '/search', query: { q: 'vue' }, fullPath: '/search?q=vue' }
+		const result = await handleMiddlewares(to, from)
+
+		// Middlewares should execute for query changes (correct behavior)
+		expect(middleware).toHaveBeenCalledWith(to, from)
+		expect(result).toBe(true)
+	})
+
+	it('should return true when navigating to same route without name', async () => {
+		const to = { ...createRoute('/about', ''), name: undefined }
+		const from = { ...createRoute('/about', ''), name: undefined }
+		const result = await handleMiddlewares(to, from)
+		expect(result).toBe(true)
+	})
+
+	it('should execute middlewares when same fullPath but different name', async () => {
+		const middleware = vi.fn().mockResolvedValue(true)
+		const to = { ...createRoute('/admin', 'admin-new', [middleware]) }
+		const from = { ...createRoute('/admin', 'admin-old') }
+		const result = await handleMiddlewares(to, from)
+
+		// Different route definitions should execute middlewares
+		expect(middleware).toHaveBeenCalledWith(to, from)
+		expect(result).toBe(true)
+	})
+
 	it('should return true when there are no middlewares', async () => {
 		const to = createRoute('/about', 'about')
 		const from = createRoute('/home', 'home')
