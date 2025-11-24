@@ -11,19 +11,34 @@ describe('defineMiddleware', () => {
 })
 
 describe('handleMiddlewares', () => {
-	const createRoute = (path: string, name: string, middlewares: any[] = []): RouteLocationNormalized => ({
-		fullPath: path,
-		path,
-		name,
-		matched: middlewares.length > 0
-			? [{ meta: { middleware: middlewares } } as any]
-			: [],
-		meta: {},
-		params: {},
-		query: {},
-		hash: '',
-		redirectedFrom: undefined,
-	})
+	const createRoute = (
+		path: string,
+		name: string,
+		middlewares: any[] = [],
+		options: {
+			hash?: string
+			query?: Record<string, any>
+			params?: Record<string, any>
+		} = {},
+	): RouteLocationNormalized => {
+		const { hash = '', query = {}, params = {} } = options
+		const queryStr = Object.keys(query).length > 0 ? `?${new URLSearchParams(query).toString()}` : ''
+		const fullPath = `${path}${queryStr}${hash}`
+
+		return {
+			fullPath,
+			path,
+			name,
+			matched: middlewares.length > 0
+				? [{ meta: { middleware: middlewares } } as any]
+				: [],
+			meta: {},
+			params,
+			query,
+			hash,
+			redirectedFrom: undefined,
+		}
+	}
 
 	it('should return true when navigating to the same route', async () => {
 		const to = createRoute('/home', 'home')
@@ -34,8 +49,8 @@ describe('handleMiddlewares', () => {
 
 	it('should skip middlewares when only hash changes', async () => {
 		const middleware = vi.fn().mockResolvedValue(true)
-		const to = { ...createRoute('/docs#api', 'docs', [middleware]), hash: '#api', path: '/docs', fullPath: '/docs#api' }
-		const from = { ...createRoute('/docs#intro', 'docs'), hash: '#intro', path: '/docs', fullPath: '/docs#intro' }
+		const to = createRoute('/docs', 'docs', [middleware], { hash: '#api' })
+		const from = createRoute('/docs', 'docs', [], { hash: '#intro' })
 		const result = await handleMiddlewares(to, from)
 
 		// Hash-only changes should skip middlewares (hash is for scroll position)
@@ -45,8 +60,8 @@ describe('handleMiddlewares', () => {
 
 	it('should execute middlewares when only query changes', async () => {
 		const middleware = vi.fn().mockResolvedValue(true)
-		const to = { ...createRoute('/search?q=react', 'search', [middleware]), path: '/search', query: { q: 'react' }, fullPath: '/search?q=react' }
-		const from = { ...createRoute('/search?q=vue', 'search'), path: '/search', query: { q: 'vue' }, fullPath: '/search?q=vue' }
+		const to = createRoute('/search', 'search', [middleware], { query: { q: 'react' } })
+		const from = createRoute('/search', 'search', [], { query: { q: 'vue' } })
 		const result = await handleMiddlewares(to, from)
 
 		// Middlewares should execute for query changes (correct behavior)
@@ -54,9 +69,20 @@ describe('handleMiddlewares', () => {
 		expect(result).toBe(true)
 	})
 
+	it('should execute middlewares when query has different number of keys', async () => {
+		const middleware = vi.fn().mockResolvedValue(true)
+		const to = createRoute('/search', 'search', [middleware], { query: { q: 'react', page: '1' } })
+		const from = createRoute('/search', 'search', [], { query: { q: 'react' } })
+		const result = await handleMiddlewares(to, from)
+
+		// Different number of query keys should execute middlewares
+		expect(middleware).toHaveBeenCalledWith(to, from)
+		expect(result).toBe(true)
+	})
+
 	it('should return true when navigating to same route without name', async () => {
-		const to = { ...createRoute('/about', ''), name: undefined }
-		const from = { ...createRoute('/about', ''), name: undefined }
+		const to = createRoute('/about', undefined as any)
+		const from = createRoute('/about', undefined as any)
 		const result = await handleMiddlewares(to, from)
 		expect(result).toBe(true)
 	})
