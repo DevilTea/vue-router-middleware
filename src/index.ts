@@ -3,6 +3,9 @@ import type { Middleware } from './types'
 
 export * from './types'
 
+type NavigationGuard = Parameters<Router['beforeEach']>[0]
+type RouteLocationNormalizedLoaded = Parameters<NavigationGuard>[0]
+
 /**
  * Performs a shallow equality check between two objects.
  * Compares the number of keys and each key's value using strict equality (===).
@@ -26,7 +29,7 @@ function shallowEqual(obj1: Record<string, any>, obj2: Record<string, any>): boo
 	return true
 }
 
-export async function handleMiddlewares(to: Parameters<Parameters<Router['beforeEach']>[0]>[0], from: Parameters<Parameters<Router['beforeEach']>[0]>[1]) {
+export async function handleMiddlewares(to: RouteLocationNormalizedLoaded, from: RouteLocationNormalizedLoaded) {
 	// If the user is navigating to the same route, skip the middlewares
 	// Check path, query, params, hash, and name to determine if routes are identical
 	const isSamePath = to.path === from.path
