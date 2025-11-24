@@ -3,6 +3,14 @@ import type { Middleware } from './types'
 
 export * from './types'
 
+/**
+ * Performs a shallow equality check between two objects.
+ * Compares the number of keys and each key's value using strict equality (===).
+ *
+ * @param obj1 - First object to compare
+ * @param obj2 - Second object to compare
+ * @returns true if objects have the same keys with equal values, false otherwise
+ */
 function shallowEqual(obj1: Record<string, any>, obj2: Record<string, any>): boolean {
 	const keys1 = Object.keys(obj1)
 	const keys2 = Object.keys(obj2)
@@ -20,7 +28,7 @@ function shallowEqual(obj1: Record<string, any>, obj2: Record<string, any>): boo
 
 export async function handleMiddlewares(...[to, from]: Parameters<Parameters<Router['beforeEach']>[0]>) {
 	// If the user is navigating to the same route, skip the middlewares
-	// Check path, query, params, and name - but not hash (hash is typically for scroll position)
+	// Check path, query, params, and name - but not hash (hash changes are typically for scroll position)
 	const isSamePath = to.path === from.path
 	const isSameName = to.name === from.name
 	const isSameQuery = shallowEqual(to.query, from.query)
