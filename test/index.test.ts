@@ -47,14 +47,14 @@ describe('handleMiddlewares', () => {
 		expect(result).toBe(true)
 	})
 
-	it('should skip middlewares when only hash changes', async () => {
+	it('should execute middlewares when only hash changes', async () => {
 		const middleware = vi.fn().mockResolvedValue(true)
 		const to = createRoute('/docs', 'docs', [middleware], { hash: '#api' })
 		const from = createRoute('/docs', 'docs', [], { hash: '#intro' })
 		const result = await handleMiddlewares(to, from)
 
-		// Hash-only changes should skip middlewares (hash is for scroll position)
-		expect(middleware).not.toHaveBeenCalled()
+		// Hash changes should execute middlewares as hash is part of route identity
+		expect(middleware).toHaveBeenCalledWith(to, from)
 		expect(result).toBe(true)
 	})
 

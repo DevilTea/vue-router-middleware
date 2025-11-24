@@ -28,13 +28,14 @@ function shallowEqual(obj1: Record<string, any>, obj2: Record<string, any>): boo
 
 export async function handleMiddlewares(...[to, from]: Parameters<Parameters<Router['beforeEach']>[0]>) {
 	// If the user is navigating to the same route, skip the middlewares
-	// Check path, query, params, and name - but not hash (hash changes are typically for scroll position)
+	// Check path, query, params, hash, and name to determine if routes are identical
 	const isSamePath = to.path === from.path
 	const isSameName = to.name === from.name
 	const isSameQuery = shallowEqual(to.query, from.query)
 	const isSameParams = shallowEqual(to.params, from.params)
+	const isSameHash = to.hash === from.hash
 
-	if (isSamePath && isSameName && isSameQuery && isSameParams)
+	if (isSamePath && isSameName && isSameQuery && isSameParams && isSameHash)
 		return true
 
 	// Early exit if no matched routes
