@@ -5,11 +5,11 @@ export * from './types'
 
 /**
  * Performs a shallow equality check between two objects.
- * Compares the number of keys and each key's value using strict equality (===).
+ * Compares the number of keys, verifies all keys exist in both objects, and checks each key's value using strict equality (===).
  *
  * @param obj1 - First object to compare
  * @param obj2 - Second object to compare
- * @returns true if objects have the same keys with equal values, false otherwise
+ * @returns true if objects have the same keys (by name) with equal values, false otherwise
  */
 function shallowEqual(obj1: Record<string, any>, obj2: Record<string, any>): boolean {
 	const keys1 = Object.keys(obj1)
