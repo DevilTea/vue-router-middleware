@@ -58,8 +58,8 @@ pnpm typecheck
 
 ## Release
 
-- `pnpm release` — runs `bumpp` (version bump + git tag + push) then `pnpm publish`
-- Pushing a `v*` tag triggers `.github/workflows/release.yml` (changelogithub generates GitHub release notes)
+- Releases run in CI: trigger the `Release` workflow (workflow_dispatch) with a `bump_type` (patch/minor/major). It validates (`pnpm build && pnpm typecheck && pnpm test`), bumps the version with `bumpp` (pushes the release commit + `v*` tag), publishes to npm via trusted publishing (OIDC — no token secret), then generates GitHub release notes with `changelogithub`.
+- The local `pnpm release` script bypasses CI validation and produces no GitHub release notes — prefer the workflow.
 - `prepublishOnly` builds automatically before publish
 
 ## Gotchas
